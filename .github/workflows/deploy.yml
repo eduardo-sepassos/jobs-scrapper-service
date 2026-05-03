@@ -20,7 +20,8 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./src/JobsScrapper.Api
+          file: ./src/JobsScrapper.Api/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USER }}/jobs-scrapper-service:latest
 
