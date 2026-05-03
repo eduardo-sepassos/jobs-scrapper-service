@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobs-scrapper-service
+  namespace: jobs-scrapper-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jobs-scrapper-service
+  template:
+    metadata:
+      labels:
+        app: jobs-scrapper-service
+    spec:
+      containers:
+      - name: jobs-scrapper-service
+        image: ${{ secrets.DOCKER_USER }}/jobs-scrapper-service:latest
+        ports:
+        - containerPort: 8080
+        - containerPort: 8081
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Production
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jobs-scrapper-service
+  namespace: jobs-scrapper-service
+spec:
+  selector:
+    app: jobs-scrapper-service
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: https
+    port: 8081
+    targetPort: 8081
+  type: ClusterIP

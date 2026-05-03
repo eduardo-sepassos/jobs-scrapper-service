@@ -29,6 +29,9 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@master
         with:
@@ -39,4 +42,5 @@ jobs:
             NAMESPACE=jobs-scrapper-service
             sudo kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml get namespace "$NAMESPACE" >/dev/null 2>&1 || \
               sudo kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml create namespace "$NAMESPACE"
+            sudo kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml apply -f k8s/deployment.yaml
             sudo kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml -n "$NAMESPACE" rollout restart deployment/jobs-scrapper-service
